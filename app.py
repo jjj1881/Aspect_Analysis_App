@@ -21,7 +21,7 @@ SENTIMENT_MODEL_ID = "jiangzy1881/aspect-sentiment-model"
 
 # Keep the Streamlit Cloud demo responsive. Full-size experiments should be run
 # in Colab/notebooks and exported to Excel for the assignment.
-MAX_BATCH_ROWS = 500
+MAX_BATCH_ROWS = 100
 
 ASPECT_DISPLAY_NAMES = {
     "food": "Food",
@@ -298,6 +298,74 @@ def generate_business_summary(result_df: pd.DataFrame) -> str:
     return f"The review contains negative feedback related to {aspects}. It should be reviewed by the responsible business team."
 
 
+
+# -----------------------------------------------------------------------------
+# Tab styling
+# -----------------------------------------------------------------------------
+st.markdown(
+    """
+    <style>
+    /* Main tab container */
+    div[data-baseweb="tab-list"] {
+        gap: 12px;
+        background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
+        padding: 10px 12px;
+        border-radius: 20px;
+        border: 1px solid #fed7aa;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+        margin-bottom: 18px;
+    }
+
+    /* Individual tab buttons */
+    button[data-baseweb="tab"] {
+        height: 46px;
+        padding: 0 20px;
+        border-radius: 16px !important;
+        background-color: #ffffff;
+        border: 1px solid #ffedd5;
+        color: #374151;
+        font-weight: 700;
+        transition: all 0.18s ease-in-out;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    /* Tab label text */
+    button[data-baseweb="tab"] p {
+        font-size: 0.98rem;
+        font-weight: 700;
+        color: inherit;
+    }
+
+    /* Hover effect */
+    button[data-baseweb="tab"]:hover {
+        background-color: #ffedd5;
+        border-color: #fb923c;
+        transform: translateY(-1px);
+        box-shadow: 0 7px 16px rgba(249, 115, 22, 0.18);
+    }
+
+    /* Selected tab */
+    button[data-baseweb="tab"][aria-selected="true"] {
+        background: linear-gradient(135deg, #fb7185 0%, #f97316 100%);
+        color: #ffffff !important;
+        border: 1px solid rgba(249, 115, 22, 0.9);
+        box-shadow: 0 8px 20px rgba(249, 115, 22, 0.28);
+    }
+
+    button[data-baseweb="tab"][aria-selected="true"] p {
+        color: #ffffff !important;
+    }
+
+    /* Remove default underline highlight */
+    div[data-baseweb="tab-highlight"] {
+        display: none;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 # -----------------------------------------------------------------------------
 # Streamlit UI
 # -----------------------------------------------------------------------------
@@ -513,7 +581,7 @@ with tab_batch:
             "Maximum number of reviews to analyze",
             min_value=1,
             max_value=max_allowed,
-            value=min(200, max_allowed),
+            value=min(50, max_allowed),
             step=1,
             help=f"Limited to {MAX_BATCH_ROWS} rows for Streamlit Cloud demo performance."
         )
