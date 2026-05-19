@@ -61,6 +61,13 @@ SENTIMENT_ORDER = {
     "error": 3,
 }
 
+SENTIMENT_COLOR_MAP = {
+    "negative": "#EF4444",   # red
+    "neutral": "#60A5FA",    # light blue
+    "positive": "#22C55E",   # green
+    "error": "#9CA3AF",      # gray
+}
+
 
 @st.cache_resource(show_spinner=True)
 def load_models():
@@ -171,32 +178,6 @@ def assign_priority(aspect: str, sentiment: str, negative_count: int = 1) -> str
     return "Low"
 
 
-def generate_suggested_action(aspect: str, sentiment: str, priority: str, team: str) -> str:
-    """Generate a concise rule-based action recommendation without using any LLM."""
-    aspect_display = ASPECT_DISPLAY_NAMES.get(aspect, aspect)
-    sentiment_lower = str(sentiment).lower()
-
-    if priority == "High":
-        return (
-            f"Escalate to {team}. Review the {aspect_display.lower()} issue first and "
-            "follow up with the customer as soon as possible."
-        )
-
-    if priority == "Medium":
-        return (
-            f"Assign to {team}. Monitor repeated {aspect_display.lower()} feedback and "
-            "prepare corrective actions if similar complaints increase."
-        )
-
-    if sentiment_lower == "positive":
-        return (
-            f"No urgent action required. Share positive {aspect_display.lower()} feedback "
-            f"with {team} for service learning and best-practice reinforcement."
-        )
-
-    return f"Review manually and assign to {team} if needed."
-
-
 def sort_results_by_priority(result_df: pd.DataFrame) -> pd.DataFrame:
     """Sort rows into an actionable management queue: High first, then Medium, Low."""
     if result_df.empty:
@@ -241,9 +222,6 @@ def analyze_single_review(review_text: str, threshold: float = 0.50) -> Tuple[pd
     for row in rows:
         row["priority"] = assign_priority(row["aspect"], row["sentiment"], negative_count)
         row["responsible_team"] = TEAM_MAPPING.get(row["aspect"], "Customer Experience Team")
-        row["suggested_action"] = generate_suggested_action(
-            row["aspect"], row["sentiment"], row["priority"], row["responsible_team"]
-        )
 
     result_df = sort_results_by_priority(pd.DataFrame(rows))
 
@@ -279,7 +257,6 @@ def analyze_batch_reviews(df: pd.DataFrame, review_col: str, threshold: float = 
                         "sentiment_score": pred_row["sentiment_score"],
                         "priority": pred_row["priority"],
                         "responsible_team": pred_row["responsible_team"],
-                        "suggested_action": pred_row["suggested_action"],
                     })
 
         except Exception as e:
@@ -292,7 +269,6 @@ def analyze_batch_reviews(df: pd.DataFrame, review_col: str, threshold: float = 
                 "sentiment_score": 0.0,
                 "priority": "Review manually",
                 "responsible_team": "Customer Experience Team",
-                "suggested_action": "Review this row manually because automatic analysis failed.",
                 "error_message": str(e),
             })
 
@@ -411,7 +387,6 @@ with tab_intro:
         """
         - Automatic **priority ranking**: High-priority issues are shown first.  
         - **Responsible team routing** based on detected aspect.  
-        - Rule-based **suggested actions** for restaurant managers.  
         - **CSV export** for operational follow-up and assignment submission evidence.  
         - Dashboard filters for priority, sentiment, and aspect.
         """
@@ -449,7 +424,6 @@ with tab_single:
                     "sentiment_score",
                     "priority",
                     "responsible_team",
-                    "suggested_action",
                 ]
 
                 st.dataframe(result_df[display_cols], use_container_width=True)
@@ -575,7 +549,6 @@ with tab_batch:
                 "sentiment_score",
                 "priority",
                 "responsible_team",
-                "suggested_action",
             ]
             st.dataframe(batch_results[display_cols], use_container_width=True)
 
@@ -652,7 +625,6 @@ with tab_dashboard:
                 "sentiment_score",
                 "priority",
                 "responsible_team",
-                "suggested_action",
             ]
 
             st.dataframe(filtered_results[queue_cols], use_container_width=True)
@@ -694,7 +666,9 @@ with tab_dashboard:
                     sentiment_count,
                     names="sentiment",
                     values="count",
-                    title="Sentiment Distribution"
+                    title="Sentiment Distribution",
+                    color="sentiment",
+                    color_discrete_map=SENTIMENT_COLOR_MAP
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
