@@ -21,7 +21,7 @@ SENTIMENT_MODEL_ID = "jiangzy1881/aspect-sentiment-model"
 
 # Keep the Streamlit Cloud demo responsive. Full-size experiments should be run
 # in Colab/notebooks and exported to Excel for the assignment.
-MAX_BATCH_ROWS = 100
+MAX_BATCH_ROWS = 500
 
 ASPECT_DISPLAY_NAMES = {
     "food": "Food",
@@ -513,7 +513,7 @@ with tab_batch:
             "Maximum number of reviews to analyze",
             min_value=1,
             max_value=max_allowed,
-            value=min(50, max_allowed),
+            value=min(200, max_allowed),
             step=1,
             help=f"Limited to {MAX_BATCH_ROWS} rows for Streamlit Cloud demo performance."
         )
