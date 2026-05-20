@@ -8,8 +8,8 @@ from transformers import pipeline
 
 
 st.set_page_config(
-    page_title="Customer Review Intelligence Dashboard",
-    page_icon="🍔",
+    page_title="Restaurant Review Intelligence Dashboard",
+    page_icon="🍰",
     layout="wide"
 )
 
@@ -369,8 +369,11 @@ st.markdown(
 # -----------------------------------------------------------------------------
 # Streamlit UI
 # -----------------------------------------------------------------------------
-st.title("🍔 Customer Review Intelligence Dashboard")
-st.caption("Aspect Detection + Aspect Sentiment Classification using fine-tuned Hugging Face models")
+st.title("🍰 Restaurant Review Intelligence Dashboard")
+
+st.caption(
+    "Aspect Detection + Aspect Sentiment Classification for full-service restaurant operations"
+)
 st.info(
     "The first prediction may take longer because the fine-tuned Hugging Face models need to be loaded. "
     "Later predictions are faster due to Streamlit caching."
@@ -411,9 +414,9 @@ tab_intro, tab_single, tab_batch, tab_dashboard = st.tabs(
 with tab_intro:
     st.subheader("Business Problem")
     st.write(
-        "Restaurant chains receive large volumes of online customer reviews. "
-        "Manually reading each review is not scalable, and overall ratings do not explain "
-        "which operational areas are causing customer dissatisfaction."
+        "This dashboard is tailored to The Cheesecake Factory Hong Kong as a target deployment scenario. "
+"The company receives large volumes of online customer reviews discussing food quality, menu variety, "
+"service experience, waiting time, price, ambience, and staff performance."
     )
 
     st.subheader("Application Objective")
@@ -463,7 +466,10 @@ with tab_intro:
 with tab_single:
     st.subheader("Single Review Analysis")
 
-    example_review = "The food was delicious, but the service was slow and the price was too high."
+    example_review = (
+    "The cheesecake was amazing and the menu had many choices, "
+    "but the waiting time was too long and the service was slow."
+)
 
     review_text = st.text_area(
         "Enter a restaurant review:",
@@ -514,36 +520,38 @@ with tab_single:
 
 with tab_batch:
     st.subheader("Batch CSV Analysis")
-    st.write("Upload a CSV file containing a column of restaurant review texts.")
+    st.write(
+    "Upload a CSV file containing customer restaurant reviews for batch analysis."
+)
     st.warning(
         f"For Streamlit Cloud responsiveness, this demo analyzes at most {MAX_BATCH_ROWS} reviews at a time. "
         "Run full-size experiments in Colab and report them in the project Excel file."
     )
 
     sample_df = pd.DataFrame({
-        "review_text": [
-            "The food was delicious, but the service was slow and the price was too high.",
-            "The staff were friendly and the ambience was beautiful.",
-            "The waiting time was too long and the table was dirty.",
-            "The menu had many options, but the drinks were overpriced.",
-            "The dessert was excellent and the restaurant was very comfortable.",
-            "The burger was cold, and the fries were too salty.",
-            "Our waiter was attentive and the food arrived quickly.",
-            "The reservation process was confusing, and we waited for almost an hour.",
-            "The restaurant looks modern, but the bill was surprisingly high.",
-            "The pasta was tasty, although the room was noisy and crowded.",
-            "The coffee was excellent, but the service at the counter was unfriendly.",
-            "The steak was perfectly cooked, and the staff made us feel welcome.",
-            "The place was clean, but the chairs were uncomfortable.",
-            "The sushi was fresh, but the portions were too small for the price.",
-            "The host was rude, and our table was not ready on time.",
-            "The wine list was impressive, but the menu was hard to understand.",
-            "The atmosphere was relaxing, and the music was pleasant.",
-            "The soup was bland, and no one came to check on our table.",
-            "The restaurant was easy to find, and the staff were very helpful.",
-            "The food quality was inconsistent, but the manager handled the complaint professionally."
-        ]
-    })
+    "review_text": [
+        "The cheesecake was delicious, but the waiting time was too long.",
+        "The menu had many choices and the pasta tasted great.",
+        "The service was friendly, but our food arrived very slowly.",
+        "The ambience was comfortable and the restaurant was clean.",
+        "The steak was overcooked and the price was too expensive.",
+        "Our waiter was attentive and explained the menu clearly.",
+        "The dessert selection was impressive and the portions were large.",
+        "The restaurant was crowded and we waited almost 40 minutes for a table.",
+        "The drinks were refreshing, but the service quality was inconsistent.",
+        "The food quality was excellent and the atmosphere was relaxing.",
+        "The pasta portion was small compared to the price.",
+        "The waitress was polite and refilled our drinks quickly.",
+        "The menu was too large and difficult to understand.",
+        "The cheesecake tasted amazing and the presentation was beautiful.",
+        "The staff handled our complaint professionally.",
+        "The dining environment was noisy during peak hours.",
+        "The food arrived quickly and everything tasted fresh.",
+        "The reservation process was smooth and efficient.",
+        "The chicken dish was too salty, but the dessert was excellent.",
+        "The restaurant experience was enjoyable overall."
+    ]
+})
 
     with st.expander("Download sample CSV for testing"):
         st.write("You can use this 20-review sample file to test batch analysis and dashboard functions.")
